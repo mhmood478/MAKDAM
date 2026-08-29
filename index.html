@@ -1,11 +1,97 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>شجرتنا</title><link rel="stylesheet" href="style.css"></head><body>
-<header><div class="brand">🌿 <div><b>شجرتنا</b><small>شجرة العائلة</small></div></div><nav><button id="share">🔗 مشاركة</button><button id="settings">⚙️ إعدادات</button><button class="primary" id="addRoot">＋ إضافة شخص</button></nav></header>
-<section class="hero"><span>بدون تسجيل دخول</span><h1 id="title">شجرتنا العائلية</h1><p>محرك علاقات عائلي: الأب والأم والزوج/الزوجة والأبناء والإخوة مترابطون تلقائيًا.</p></section>
-<main><aside><h3>الشخص المحدد</h3><div id="selected">اختر شخصًا من الشجرة</div><div id="personActions" class="hidden actions"><button id="edit">✏️ تعديل</button><button id="delete" class="danger">🗑️ حذف</button></div><h3>إضافة قريب</h3><div class="quick"><button data-rel="father">👨<small>أب</small></button><button data-rel="mother">👩<small>أم</small></button><button data-rel="brother">👨<small>أخ</small></button><button data-rel="sister">👩<small>أخت</small></button><button data-rel="son">👦<small>ابن</small></button><button data-rel="daughter">👧<small>ابنة</small></button><button data-rel="spouse">💍<small>زوج/زوجة</small></button></div><hr><div class="stats"><b id="count">0<small>أفراد</small></b><b id="gens">0<small>أجيال</small></b></div><p class="hint">اضغط على البطاقة ثم اختر نوع القرابة. الإخوة يشتركون تلقائيًا في الوالدين المعروفين.</p></aside>
-<section class="panel"><div class="toolbar"><button id="fit">⌖</button><button id="out">−</button><span id="zoom">100%</span><button id="in">＋</button></div><div id="tree"></div></section></main>
-<div id="modal" class="modal hidden"><div class="dialog"><button class="close" id="close">×</button><div class="icon">🌱</div><h2 id="mt">إضافة شخص</h2><p id="mh"></p><label>الاسم<input id="name" maxlength="80" placeholder="أحمد محمد"></label><div class="two"><label>الجنس<select id="gender"><option value="male">ذكر</option><option value="female">أنثى</option></select></label><label>سنة الميلاد<input id="birth" type="number" min="0" max="2100"></label></div>
-<div id="addFields"><label>صلة القرابة<select id="rel"><option value="root">الشخص الأول</option><option value="father">الأب</option><option value="mother">الأم</option><option value="brother">الأخ</option><option value="sister">الأخت</option><option value="son">الابن</option><option value="daughter">الابنة</option><option value="spouse">الزوج/الزوجة</option></select></label></div>
-<div id="editFields" class="hidden"><label>الأب<select id="fatherId"></select></label><label>الأم<select id="motherId"></select></label><label>الزوج/الزوجة<select id="spouseId"></select></label></div>
-<button class="primary full" id="save">حفظ</button></div></div>
-<div id="settingsModal" class="modal hidden"><div class="dialog"><button class="close" id="closeSettings">×</button><h2>إعدادات الشجرة</h2><label>اسم الشجرة<input id="newTitle"></label><button class="primary full" id="saveTitle">حفظ</button></div></div>
-<script type="module" src="app.js"></script></body></html>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>شجرتنا</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <div class="logo">🌿 <span>شجرتنا<small>شجرة العائلة</small></span></div>
+  <button id="newBtn" class="primary">＋ شخص جديد</button>
+</header>
+
+<div id="status" class="status">جارٍ التحميل…</div>
+
+<section class="intro">
+  <div class="badge">بدون تسجيل دخول</div>
+  <h1 id="familyTitle">شجرتنا العائلية</h1>
+  <p>حدد أي شخص، ثم اختر نوع القريب. العلاقات تُحفظ كأب وأم وزوج/زوجة وأبناء، وليس حسب مكان البطاقة.</p>
+</section>
+
+<main>
+<aside>
+  <h3>الشخص المحدد</h3>
+  <div id="selected" class="selected">لم تحدد شخصًا</div>
+
+  <div id="actions" class="actions hidden">
+    <button id="editBtn">✏️ تعديل</button>
+    <button id="deleteBtn" class="danger">🗑 حذف</button>
+  </div>
+
+  <h3>إضافة قريب</h3>
+  <div class="relations">
+    <button data-relation="father">👨<small>أب</small></button>
+    <button data-relation="mother">👩<small>أم</small></button>
+    <button data-relation="brother">👦<small>أخ</small></button>
+    <button data-relation="sister">👧<small>أخت</small></button>
+    <button data-relation="son">👦<small>ابن</small></button>
+    <button data-relation="daughter">👧<small>ابنة</small></button>
+    <button data-relation="spouse">💍<small>زوج/زوجة</small></button>
+  </div>
+
+  <div class="help">
+    <b>مثال:</b><br>
+    اختر أحمد ← اضغط «أب».<br>
+    سيُحفظ الشخص الجديد كـ <b>fatherId لأحمد</b> ويظهر فوقه.
+  </div>
+
+  <div class="stats">
+    <div><b id="count">0</b><small>أفراد</small></div>
+    <div><b id="generations">0</b><small>أجيال</small></div>
+  </div>
+</aside>
+
+<section class="tree-area">
+  <div class="zoom">
+    <button id="fit">⌖</button><button id="minus">−</button><span id="zoomText">100%</span><button id="plus">＋</button>
+  </div>
+  <div id="tree"></div>
+</section>
+</main>
+
+<div id="personModal" class="modal hidden">
+  <div class="dialog">
+    <button class="close" id="closePerson">×</button>
+    <h2 id="modalTitle">إضافة شخص</h2>
+    <p id="modalDescription"></p>
+    <label>الاسم<input id="name" maxlength="80" placeholder="مثال: أحمد محمد"></label>
+    <div class="two">
+      <label>الجنس<select id="gender"><option value="male">ذكر</option><option value="female">أنثى</option></select></label>
+      <label>سنة الميلاد<input id="birth" type="number" min="0" max="2100"></label>
+    </div>
+    <button id="save" class="primary full">حفظ الشخص</button>
+  </div>
+</div>
+
+<div id="editModal" class="modal hidden">
+  <div class="dialog">
+    <button class="close" id="closeEdit">×</button>
+    <h2>تعديل الشخص</h2>
+    <label>الاسم<input id="editName" maxlength="80"></label>
+    <div class="two">
+      <label>الجنس<select id="editGender"><option value="male">ذكر</option><option value="female">أنثى</option></select></label>
+      <label>سنة الميلاد<input id="editBirth" type="number" min="0" max="2100"></label>
+    </div>
+    <h4>العلاقات</h4>
+    <label>الأب<select id="father"></select></label>
+    <label>الأم<select id="mother"></select></label>
+    <label>الزوج/الزوجة<select id="spouse"></select></label>
+    <button id="saveEdit" class="primary full">حفظ التعديل</button>
+  </div>
+</div>
+
+<script type="module" src="app.js"></script>
+</body>
+</html>
