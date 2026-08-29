@@ -1,0 +1,1 @@
+{"rules":{"".read":false,".write":false,"families":{"$familyId":{".read":true,".write":true,"people":{"$personId":{".validate":"newData.hasChildren(['name','gender','relation','createdAt']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 80"}}}}}}
